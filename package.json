@@ -1,8 +1,9 @@
 {
   "name": "edit-word-commentator",
-  "version": "0.1.0",
-  "private": true,
+  "version": "1.0.0",
+  "homepage": "https://maxbeier.github.io/edit-word-commentator",
   "devDependencies": {
+    "gh-pages": "^0.12.0",
     "react-scripts": "0.8.5"
   },
   "dependencies": {
@@ -16,6 +17,7 @@
   },
   "scripts": {
     "start": "react-scripts start",
-    "build": "react-scripts build"
+    "build": "react-scripts build",
+    "deploy": "yarnpkg build; gh-pages -d build"
   }
 }
