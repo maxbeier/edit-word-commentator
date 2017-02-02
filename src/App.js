@@ -8,9 +8,11 @@ export default React.createClass({
 
    getInitialState() {
       return {
+         error: null,
          file: null,
-         fileContents: {},
+         zip: null,
          authors: [],
+         fileContents: {},
       };
    },
 
@@ -21,7 +23,7 @@ export default React.createClass({
    unzip() {
       JSZip.loadAsync(this.state.file)
          .then((zip) => {
-            this.setState({ zip });
+            this.setState({ zip, error: null });
 
             const relevantFiles = _.filter(zip.files, file => file.name.endsWith('.xml'));
             const promises = relevantFiles.map(file => file.async('string'));
@@ -83,14 +85,6 @@ export default React.createClass({
    },
 
    render() {
-      if (this.state.error) {
-         return (
-            <pre className="container m-t-2 alert alert-error">
-               {this.state.error.message}
-            </pre>
-         );
-      }
-
       const style = {
          padding: '0 1rem',
          border: '2px dashed #e0e0e0',
@@ -105,32 +99,28 @@ export default React.createClass({
       };
 
       return (
-         <div className="container">
-            <header className="site-header dashed-bottom">
-               <a href="/" className="site-title">Edit Word Commentator</a>
-            </header>
+         <div className="grid">
+            {this.state.error &&
+               <div className="cell cell-12"><pre className="alert alert-error">
+                  {this.state.error.message}
+               </pre></div>
+            }
 
-            <main className="site-main grid">
-               <div className={`cell ${this.state.file ? 'cell-6' : ''}`}>
-                  <Dropzone
-                     onDrop={this.onDrop}
-                     multiple={false}
-                     disablePreview
-                     style={style}
-                     activeStyle={activeStyle}
-                     className="truncate"
-                     accept="application/vnd.openxmlformats-officedocument.wordprocessingml.document"
-                  >
-                     {this.state.file ? this.state.file.name : 'Drop Word Document'}
-                  </Dropzone>
-               </div>
+            <div className={`cell ${this.state.file ? 'cell-6' : ''}`}>
+               <Dropzone
+                  onDrop={this.onDrop}
+                  multiple={false}
+                  disablePreview
+                  style={style}
+                  activeStyle={activeStyle}
+                  className="truncate"
+                  accept="application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+               >
+                  {this.state.file ? this.state.file.name : 'Drop Word Document'}
+               </Dropzone>
+            </div>
 
-               {this.state.file && this.renderForm()}
-            </main>
-
-            <footer className="site-footer dashed-top">
-               Github: <a href="https://github.com/maxbeier/edit-word-commentator">edit-word-commentator</a>
-            </footer>
+            {this.state.file && this.renderForm()}
          </div>
       );
    },
